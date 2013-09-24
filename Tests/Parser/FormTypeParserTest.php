@@ -65,10 +65,30 @@ class FormTypeParserTest extends \PHPUnit_Framework_TestCase
                         'readonly' => false
                     ),
                     'collection_type[b]' => array(
-                        'dataType' => 'string',
+                        'dataType' => 'array of objects (Test)',
                         'required' => true,
                         'description' => '',
-                        'readonly' => false
+                        'readonly' => false,
+                        'children' => array(
+                            'a' => array(
+                                'dataType' => 'string',
+                                'required' => true,
+                                'description' => 'A nice description',
+                                'readonly' => false
+                            ),
+                            'b' => array(
+                                'dataType' => 'string',
+                                'required' => true,
+                                'description' => '',
+                                'readonly' => false
+                            ),
+                            'c' => array(
+                                'dataType' => 'boolean',
+                                'required' => true,
+                                'description' => '',
+                                'readonly' => false
+                            )
+                        )
                     )
                 )
             ),

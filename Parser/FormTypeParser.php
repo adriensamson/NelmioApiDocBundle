@@ -96,12 +96,22 @@ class FormTypeParser implements ParserInterface
             }
 
             $bestType = '';
+            $children = null;
             for ($type = $config->getType(); null !== $type; $type = $type->getParent()) {
                 if (isset($this->mapTypes[$type->getName()])) {
                     $bestType = $this->mapTypes[$type->getName()];
                 } elseif ('collection' === $type->getName()) {
                     if (is_string($config->getOption('type')) && isset($this->mapTypes[$config->getOption('type')])) {
                         $bestType = sprintf('array of %ss', $this->mapTypes[$config->getOption('type')]);
+                    } else {
+                        $subForm = $this->formFactory->create($config->getOption('type'));
+                        if ($dataClass = $subForm->getConfig()->getDataClass()) {
+                            $exp = explode("\\", $dataClass);
+                            $bestType = sprintf('array of objects (%s)', end($exp));
+                        } else {
+                            $bestType = 'array of objects';
+                        }
+                        $children = $this->parseForm($subForm);
                     }
                 }
             }
@@ -147,6 +157,9 @@ class FormTypeParser implements ParserInterface
                 'description'   => $config->getAttribute('description'),
                 'readonly'      => $config->getDisabled(),
             );
+            if (null !== $children) {
+                $parameters[$name]['children'] = $children;
+            }
         }
 
         return $parameters;
